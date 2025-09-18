@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>媽！生日快樂！！</title>
+  <style>
+    :root{
+      --accent: #ff6b6b;
+      --bg: #fffbe6;
+      --card-w: 900px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+      font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background: linear-gradient(180deg,#fdf6e3,#fff1e6);
+      padding:20px;
+      flex-direction: column;
+    }
+    .card{
+      width: min(95%, var(--card-w));
+      background: white;
+      border-radius:18px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+      overflow:hidden;
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:0;
+      align-items:stretch;
+    }
+    .left{
+      padding:40px;
+      position:relative;
+    }
+    .title{
+      font-size:34px; color:var(--accent); margin:0 0 10px 0;
+      letter-spacing:1px;
+    }
+    .msg{
+      font-size:18px; color:#333; line-height:1.6;
+    }
+    .right{
+      background-image: url('background.jpg'); /* 替換成你的圖片 */
+      background-size:cover; background-position:center;
+      min-height:320px;
+      display:flex; align-items:flex-end; justify-content:center;
+      padding:20px;
+      color:#fff;
+      position:relative;
+    }
+    .badge{
+      background:rgba(0,0,0,0.35);
+      padding:12px 16px;
+      border-radius:12px;
+      backdrop-filter: blur(4px);
+      font-weight:600;
+    }
+    .controls{margin-top:20px; display:flex; gap:10px; flex-wrap:wrap}
+    button{
+      border:0; padding:10px 14px; border-radius:10px; cursor:pointer;
+      background:var(--accent); color:#fff; font-weight:600;
+    }
+    .sparkle{
+      position:absolute; inset:0; pointer-events:none;
+      background-image: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.35) 0 2px, transparent 3px),
+                        radial-gradient(circle at 80% 60%, rgba(255,255,255,0.25) 0 3px, transparent 4px);
+      opacity:0; animation: appear 1s ease forwards;
+    }
+    @keyframes appear{
+      from{opacity:0; transform:scale(0.95)}
+      to{opacity:1; transform:scale(1)}
+    }
+    /* 簡單響應式 */
+    @media (max-width:880px){
+      .card{grid-template-columns: 1fr; padding:0}
+      .right{min-height:220px}
+    }
+    #qrcode{margin-top:20px;}
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <div class="left">
+      <h1 class="title" id="title">生日快樂，媽媽 🎂</h1>
+      <p class="msg" id="msg">
+        TO 媽:<br>
+        謝謝你一直以來的照顧與包容，每次我犯錯或是有任何問題都有你在陪著我度過，有你真好
+      </p>
+      <p>祝你生日快樂、健康平安、事事順心！😍😍</p>
+
+      <div class="controls">
+        <button onclick="playConfetti()">灑花慶祝</button>
+        <button onclick="downloadCard()">下載 PNG</button>
+        <button onclick="toggleMessage()">切換賀詞</button>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="badge" id="ageBadge">永遠的 18 歲</div>
+      <div class="sparkle" id="sparkle"></div>
+    </div>
+  </div>
+
+  <!-- QR Code 容器 -->
+  <div id="qrcode"></div>
+
+  <!-- 引入套件 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+    let alt = false;
+
+    function toggleMessage(){
+      const msg = document.getElementById('msg');
+      alt = !alt;
+      msg.innerHTML = alt
+        ? '媽 抱歉你生日這天我還在上課跟報告 估計會很晚到家😭😭<br>希望今天你跟朋友出去吃飯吃得開心 <br>但是別忘了我們後面還有約吃飯喔！<br>記得留點胃給我跟哥哥！'
+        : '謝謝你一直以來的照顧與包容，祝你生日快樂、健康平安、事事順心！😍😍<br>— michael敬上';
+    }
+
+    function playConfetti(){
+      for(let i=0;i<60;i++){
+        const el = document.createElement('div');
+        el.style.position='fixed';
+        el.style.left = (50 + (Math.random()-0.5)*60) + '%';
+        el.style.top = (10 + Math.random()*30) + '%';
+        el.style.width = el.style.height = (6 + Math.random()*12) + 'px';
+        el.style.background = ['#ff6b6b','#ffd166','#6a9c78','#6bc1ff'][Math.floor(Math.random()*4)];
+        el.style.borderRadius='50%';
+        el.style.opacity='0.95';
+        el.style.zIndex=9999;
+        document.body.appendChild(el);
+        const dy = 600 + Math.random()*300;
+        el.animate(
+          [
+            {transform:'translateY(0) rotate(0deg)', opacity:1},
+            {transform:`translateY(${dy}px) rotate(${360*Math.random()}deg)`, opacity:0}
+          ],
+          { duration: 1800 + Math.random()*1200, easing:'cubic-bezier(.2,.8,.2,1)' }
+        ).onfinish = ()=> el.remove();
+      }
+    }
+
+    // 下載卡片
+    function downloadCard(){
+      const card = document.getElementById('card');
+      html2canvas(card).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'birthday_card.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    }
+
+    // 產生 QR Code
+    var cardUrl = "https://你的網址/card.html";  // <-- 這裡改成你上傳的卡片網址
+    new QRCode(document.getElementById("qrcode"), {
+      text: cardUrl,
+      width: 160,
+      height: 160,
+      colorDark : "#000000",
+      colorLight : "#ffffff",
+      correctLevel : QRCode.CorrectLevel.H
+    });
+  </script>
+</body>
+</html>
